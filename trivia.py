@@ -1,5 +1,7 @@
-import time
-import tkinter
+# import time
+import tkinter as tk 
+from tkinter import StringVar
+from tkinter import messagebox
 preguntas = [
 
     {
@@ -69,27 +71,91 @@ preguntas = [
     }
 ]
 
-puntuacion = 0
-tiempo = time.time()
+class Trivia_Game:
+    def __init__(self, preguntas):
+        self.preguntas = preguntas
+        self.index_pregunta = 0
+        self.puntaje = 0
 
-for pregunta in preguntas:
-    print(pregunta["pregunta"])
-    
-    for i, respuesta in enumerate(pregunta["respuestas"]):
-        print(f"{i + 1}. {respuesta}")
+        self.root = tk.Tk()
+        self.root.title('Morfo Trivia Game')
 
-    respuesta_usuario = input("Escribe el número de la respuesta correcta: ")
+        self.pregunta_label = tk.Label(self.root, text='', font=("Arial", 14))
+        self.pregunta_label.pack(pady=10)
 
-    if pregunta["respuestas"][int(respuesta_usuario) - 1] == pregunta["respuesta correcta"]:
-        print("¡Respuesta correcta!")
-        puntuacion += 1
+        self.opcion_var = StringVar()
+        self.opcion_buttons = []
 
-    else:
-        print(f"Respuesta incorrecta. La respuesta correcta es {pregunta['respuesta correcta']}.")
+        for i in range(4):
+            opcion_button = tk.Radiobutton(self.root, text='', variable=self.opcion_var, value=i, font=("Arial", 10))
+            opcion_button.pack(pady=5)
+            self.opcion_buttons.append(opcion_button)
+
+        self.sig_button = tk.Button(self.root, text='Siguiente', command=self.siguiente_pregunta)
+        self.sig_button.pack(pady=5)
+
+        self.show_pregunta()
+        self.root.mainloop()
+
+    def show_pregunta(self):
+        pregunta = self.preguntas[self.index_pregunta]
+        self.pregunta_label.configure(text=pregunta['pregunta'])
+
+        opciones = pregunta['respuestas']
+        for i in range(len(opciones)):
+            self.opcion_buttons[i].configure(text=opciones[i], value=opciones[i])
+
+    def siguiente_pregunta(self):
+        print(self.index_pregunta)
+        self.check_respuesta()
+        self.index_pregunta += 1
+
+
+        if self.index_pregunta < len(self.preguntas):
+            self.show_pregunta()
+        else:
+            messagebox.showinfo("Morfo Trivia Game", f"Game Over \nTu puntaje es: {self.puntaje}/{len(self.preguntas)}")        
+            self.root.quit()
+
+    def check_respuesta(self):
+        respuesta = self.opcion_var.get()
+        pregunta = self.preguntas[self.index_pregunta]
+        respuesta_correcta = pregunta["respuesta correcta"]
+
+        if respuesta == respuesta_correcta:
+            self.puntaje += 1
+        
         
 
-tiempo = time.time() - tiempo
-tiempo = tiempo/60
+game = Trivia_Game(preguntas)
 
-print(f"Tu tiempo fue de {tiempo} minutos")
-print(f"Tu puntuación final es {puntuacion} de {len(preguntas)} preguntas.")
+
+
+
+
+# puntuacion = 0
+# tiempo = time.time()
+
+
+
+# for pregunta in preguntas:
+#     print(pregunta["pregunta"])
+    
+#     for i, respuesta in enumerate(pregunta["respuestas"]):
+#         print(f"{i + 1}. {respuesta}")
+
+#     respuesta_usuario = input("Escribe el número de la respuesta correcta: ")
+
+#     if pregunta["respuestas"][int(respuesta_usuario) - 1] == pregunta["respuesta correcta"]:
+#         print("¡Respuesta correcta!")
+#         puntuacion += 1
+
+#     else:
+#         print(f"Respuesta incorrecta. La respuesta correcta es {pregunta['respuesta correcta']}.")
+        
+
+# tiempo = time.time() - tiempo
+# tiempo = tiempo/60
+
+# print(f"Tu tiempo fue de {tiempo} minutos")
+# print(f"Tu puntuación final es {puntuacion} de {len(preguntas)} preguntas.")
